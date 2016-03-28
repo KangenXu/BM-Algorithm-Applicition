@@ -1,77 +1,107 @@
 //This is a string match program base on BM algothrim 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<time.h> 
-#include<windows.h>
-char DNA[100000000];
-int p;
-void getdata(char *file);
-int bm(char *text,char *find);
-int main (int argc,const char *argv[])
-{
-	clock_t start1,end1,start2,end2,start3,end3;
-	double t,u,v;
-	start1=clock();
-	printf("Please Waiting....\b");
-	FILE *file1=fopen("file_1.fa","r");
-	FILE *file2=fopen("file_2.fa","r");
-    int m,k,w;
-	getdata(file1);
-	getdata(file2);
-	printf("\n");
-	end1=clock();
-	t=(double)(end1-start1)/CLOCKS_PER_SEC;
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h> 
 
-    start2=clock();
-	printf("OK, Please enter value K ,string S ：\n");
-	scanf("%d\n",&k);
-	char pattern[k];
-    fgets(pattern,k+1,stdin);
-    end2=clock();
-    u=(double)(end2-start2)/CLOCKS_PER_SEC;
+int  COUNT;
+char g_DNA[100000000];
+
+void GetData(char *file);
+int BM(char *text, char *find);
+
+int main (int argc, const char *argv[])
+{
+    clock_t start1, end1, start2, end2, start3, end3;
+    double t, u, v;
 	
-	start3=clock();
-	if((m=bm(DNA,pattern))!=-1){
-		printf("The Closeest String Start at %d line, %d list.\n",((m+1)/100)+1,(m+1)%100);
-	}else{
-		printf("ERROR!!!\n");
-	}
-    end3=clock();
-    v=(double)(end3-start3)/CLOCKS_PER_SEC;
+    start1 = clock();
+    printf("Please Waiting....\b");
+    FILE *file1 = fopen("file_1.fa","r");
+    FILE *file2 = fopen("file_2.fa","r");
 	
-	printf("Set match use %.4f seconds.\n",t);
-	printf("Enter data use %.4f seconds.\n",u);
-	printf("Use match use %.4f sseconds.\n",v);
-	return 0;
- } 
- void getdata(char *file)
- {
- 	 char a;
-	 while((a=fgetc(file))!=EOF)
-	  { 
-	    if(a=='A'||a=='T'||a=='C'||a=='G'){
-	       DNA[p]=a;
-	       p++;
-	       }
-      }
- }
- int bm(char *text,char *find)
- {
- 	if (text == '/0' || find == '/0')  
-      return -1;  
+    int m, k, w;
+        
+    GetData(file1);
+    GetData(file2);
+    printf("\n");
+    end1 = clock();
+	
+    t = (double)(end1-start1) / CLOCKS_PER_SEC;
+
+    start2 = clock();
+    printf("OK, Please enter value K ,string S ：\n");
+    scanf("%d\n", &k);
+    char pattern[k];
+    fgets(pattern, k+1, stdin);
+    end2 = clock();
+    
+    u = (double)(end2-start2) / CLOCKS_PER_SEC;
+	
+    start3 = clock();
+    if((m = BM(g_DNA,pattern)) != -1)
+    {
+        printf("The Closeest String Start at %d line, %d list.\n", ((m+1)/100)+1, (m+1)%100);
+    }
+    else
+    {
+	printf("ERROR!!!\n");
+    }
+    end3 = clock();
+    
+    v = (double)(end3-start3)/CLOCKS_PER_SEC;
+	
+    printf("Set match use %.4f seconds.\n", t);
+    printf("Enter data use %.4f seconds.\n", u);
+    printf("Use match use %.4f sseconds.\n", v);
+    return 0;
+} 
+void GetData(char *file)
+{
+    char a;
+ 	 
+    while((a=fgetc(file))!=EOF)
+    { 
+        if(a=='A' || a=='T' || a=='C' || a=='G')
+        {
+            DNA[COUNT] = a;
+	    COUNT++;
+        }
+    }
+}
+ 
+int BM(char *text, char *find)
+{
+    if (text == '/0' || find == '/0') 
+    {
+      return -1;
+    }
+    
     int i, j, k;  
     int text_len = strlen(text);  
-    int find_len = strlen(find);  
-    if (text_len < find_len)  
-        return -1;  
+    int find_len = strlen(find); 
+    
+    if (text_len < find_len)
+　　{
+        return -1;
+　　}
+　　
     int delta_1[CHAR_MAX];  
-    for (i=0; i<CHAR_MAX; i++)  
+    
+    for (i=0; i<CHAR_MAX; i++) 
+    {
         delta_1[i] = find_len;  
+    }
+    
     for (i=0; i<find_len; i++)  
+    {
         delta_1[find[i]] = find_len - i - 1;  
+    }
+    
     int rpr[find_len];  
-    rpr[find_len-1] = find_len - 1;  
+    rpr[find_len-1] = find_len - 1; 
+    
     for (i=find_len-2; i>=0; i--)  
     {  
         int len = (find_len - 1) - i;  
@@ -103,9 +133,12 @@ int main (int argc,const char *argv[])
             rpr[i] = 0 - len;  
         }  
     }  
-    int delta_2[find_len];  
+    int delta_2[find_len];   
+    
     for (i=0; i<find_len; i++)  
-        delta_2[i] = find_len - rpr[i];  
+    {
+        delta_2[i] = find_len - rpr[i];   
+    }   
     i = find_len - 1;  
     j = find_len - 1;  
     while (i < text_len)  
