@@ -1,4 +1,4 @@
-//This is a string match program base on BM algothrim 
+//This is a string matching program base on BM algothrim 
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,72 +6,65 @@
 #include <time.h> 
 
 int  COUNT;
-char g_DNA[100000000];
+char DNA_FRAGMENT[100000000];
 
-void GetData(char *file);
-int BM(char *text, char *find);
+void ReadDNADataFile(char *file);
+int BMAlogrithm(char *text, char *find);
 
-int main (int argc, const char *argv[])
+int main(int argc, const char *argv[])
 {
-    clock_t start1, end1, start2, end2, start3, end3;
-    double t, u, v;
-	
-    start1 = clock();
-    printf("Please Waiting....\b");
-    FILE *file1 = fopen("file_1.fa","r");
-    FILE *file2 = fopen("file_2.fa","r");
-	
-    int m, k, w;
-        
-    GetData(file1);
-    GetData(file2);
-    printf("\n");
-    end1 = clock();
-	
-    t = (double)(end1-start1) / CLOCKS_PER_SEC;
+    int matching_result, fragment_length;
+    double read_file_time, matching_fragment_time;
+    clock_t read_file_start, read_file_end, 
+            matching_fragment_start, matching_fragment_end;
 
-    start2 = clock();
-    printf("OK, Please enter value K ,string S ：\n");
-    scanf("%d\n", &k);
-    char pattern[k];
-    fgets(pattern, k+1, stdin);
-    end2 = clock();
-    
-    u = (double)(end2-start2) / CLOCKS_PER_SEC;
-	
-    start3 = clock();
-    if((m = BM(g_DNA,pattern)) != -1)
-    {
-        printf("The Closeest String Start at %d line, %d list.\n", ((m+1)/100)+1, (m+1)%100);
-    }
-    else
-    {
+    // 读取DNA序列文件内容
+    read_file_start = clock();
+    printf("Please waiting....\b");
+    FILE *file1 = fopen("file_1.fa","r");
+    FILE *file2 = fopen("file_2.fa","r");    
+    ReadDNADataFile(file1);
+    ReadDNADataFile(file2);
+    printf("\n");
+    read_file_end = clock();
+    read_file_time = (double)(read_file_end - read_file_start) / CLOCKS_PER_SEC;
+
+    // 输入匹配DNA片段的字符长度和字符内容
+    printf("OK, Please enter the length of fragment, and the fragment：\n");
+    scanf("%d\n", &fragment_length);
+    char pattern[fragment_length];
+    fgets(pattern, fragment_length + 1, stdin);
+
+    // 调用BM算法匹配片段第一次出现位置
+    matching_fragment_start = clock();
+    if((matching_result = BMAlogrithm(DNA_FRAGMENT, pattern)) != -1){
+        printf("The Closest fragment at %d rows, and %d columns.\n", ((matching_result + 1) / 100) + 1, (matching_result + 1) % 100);
+    }else{
 	printf("ERROR!!!\n");
     }
-    end3 = clock();
-    
-    v = (double)(end3-start3)/CLOCKS_PER_SEC;
+    matching_fragment_end = clock();
+    matching_fragment_time = (double)(matching_fragment_end - matching_fragment_start)/CLOCKS_PER_SEC;
 	
-    printf("Set match use %.4f seconds.\n", t);
-    printf("Enter data use %.4f seconds.\n", u);
-    printf("Use match use %.4f sseconds.\n", v);
+    printf("Read DNA file cost %.4f seconds.\n", read_file_time);
+    printf("Matching DNA fragment cost %.4f seconds.\n", matching_fragment_time);
     return 0;
 } 
-void GetData(char *file)
+
+
+void ReadDNADataFile(char *file)
 {
-    char a;
- 	 
-    while((a=fgetc(file))!=EOF)
-    { 
-        if(a=='A' || a=='T' || a=='C' || a=='G')
-        {
-            DNA[COUNT] = a;
-	    COUNT++;
+    char DNA_char;
+
+    while((DNA_char=fgetc(file))!=EOF){ 
+        if(DNA_char=='A' || DNA_char=='T' || DNA_char=='C' || DNA_char=='G'){
+            DNA[COUNT] = DNA_char;
+			COUNT++;
         }
     }
 }
  
-int BM(char *text, char *find)
+
+int BMAlogrithm(char *text, char *find)
 {
     if (text == '/0' || find == '/0') 
     {
@@ -163,7 +156,5 @@ int BM(char *text, char *find)
         if (j == -1)  
             return i+1;  
     }  
-      
     return -1;  
-
- }
+}
